@@ -591,6 +591,9 @@ int main(int argc, char *argv[]) {
         if (!strcmp(option, "shutdown")) {
             break;
         }
+        else{
+            printf("No such command\n");
+        }
     }
 
     // Close the file descriptor
