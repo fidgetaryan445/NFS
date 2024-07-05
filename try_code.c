@@ -492,7 +492,7 @@ int main(int argc, char *argv[]) {
             printf("  Number of data blocks: %d\n", super.num_data);
         }
 
-        if (!strcmp(option, "cf")) {
+        else if (!strcmp(option, "cf")) {
             char name[28];
             int file_type;
             printf("Please enter the file name and file type (1-text file, 2-directory):\n");
@@ -511,7 +511,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        if (!strcmp(option, "lu")) {
+        else if (!strcmp(option, "lu")) {
             printf("Please enter the file name:\n");
             char data[28];
             scanf("%s", data);
@@ -525,7 +525,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        if (!strcmp(option, "wf")) {
+        else if (!strcmp(option, "wf")) {
             printf("Please enter the file you would like to write to:\n");
             char data[28];
             scanf("%s", data);
@@ -534,7 +534,7 @@ int main(int argc, char *argv[]) {
             wrt_no_data(fd, &super, lookup(fd, &super, data, curr_dir[dir_counter]));
         }
 
-        if (!strcmp(option, "rf")) {
+        else if (!strcmp(option, "rf")) {
             printf("Please enter the file you would like to read:\n");
             char data[28];
             scanf("%s", data);
@@ -543,11 +543,11 @@ int main(int argc, char *argv[]) {
             read_file(fd, &super, lookup(fd, &super, data, curr_dir[dir_counter]));
         }
 
-        if (!strcmp(option, "laf")) {
+        else if (!strcmp(option, "laf")) {
             list_all_files(fd, &super, curr_dir[dir_counter]);
         }
 
-        if (!strcmp(option, "cd")) {
+        else if (!strcmp(option, "cd")) {
             printf("Please enter the name of directory (should be present in current dir):\n");
             char data[28];
             scanf("%s", data);
@@ -562,11 +562,11 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        if (!strcmp(option, "gb")) {
+        else if (!strcmp(option, "gb")) {
             dir_counter--;
         }
         
-        if(!strcmp(option,"ul")){
+        else if(!strcmp(option,"ul")){
             printf("Enter the name of the file to be unlinked:");
             char filename[28];
             scanf("%s" , filename);
@@ -574,7 +574,7 @@ int main(int argc, char *argv[]) {
             ulink(fd,&super ,filename,curr_dir[dir_counter]);
         }
 
-        if (!strcmp(option, "lad")) {
+        else if (!strcmp(option, "lad")) {
             printf("Please enter the name of the file you want to find:\n");
             char data[28];
             scanf("%s", data);
@@ -585,10 +585,10 @@ int main(int argc, char *argv[]) {
             printf("%s\n", result);
         }
          
-        if(!strcmp(option,"help")){
+        else if(!strcmp(option,"help")){
             help() ;
         }
-        if (!strcmp(option, "shutdown")) {
+        else if (!strcmp(option, "shutdown")) {
             break;
         }
         else{
