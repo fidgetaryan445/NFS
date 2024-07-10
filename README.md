@@ -27,5 +27,35 @@ The emulated file system folder consists of two main `C` codes, `code.c` & `try_
 | shutdown  | Closes the emulated filesystem                             |
 
 ## Network File System 
+The folder consists of `client.c` , `server.c` and other header ,codes and scripts to run the NFS.
+I have provided with `build.sh` script to make the binaries and flat file for the NFS. By default the `client.c` will connect to `localhost`.If you are running the `client` & `server` binaries on different systems then you should change the IP accordingly .
 
+**Steps to follow :**
+1)Give executable permission to `build.sh` and run it .
+2)Before running the `client` , make sure to run the `server` by the simple execute command :
+```sh
+./server
+```
+3) On client side you can follow the following usage manual : 
+  **Usage:**  ==./client -function <flat file name> <extra arguments>== 
+  
+|Function|Functionality| Extra Arguements| 
+|--------|-------------|-----------------|
+| rs        | Reads the superblock of our flat file                      |Nil|
+| cf***       | Allows user to create file in the specified directory        |<filename> <type*> <parent inode number>|
+| wf        | Allows user to choose a file using inode number and then write in it |<inode number> <data**>|
+| rf        | Allows user to read a file in the specified directory        |<inode number>|
+| ul***       | Unlinks a file or an empty directory                       |<filename> <parent inode number>|
+| laf       | Lists all files in the specified directory                   |<parent inode>|
+| lu        | Returns the inode number of a file  |<filename>|
 
+>*Type :
+> - 1 : text file 
+> - 2 : directory
+    
+>**The user is expected to not enter data of size bigger than 511 bytes. 
+    
+>***It is advised to give unique names to each file and directory as you may encounter unlink bugs otherwise.
+    
+-------------------------------------
+    
