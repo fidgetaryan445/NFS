@@ -39,15 +39,17 @@ I have provided with `build.sh` script to make the binaries and flat file for th
 3) On client side you can follow the following usage manual : 
   **Usage:**  ==./client -function <flat file name> <extra arguments>== 
   
-|Function|Functionality| Extra Arguements| 
-|--------|-------------|-----------------|
-| rs        | Reads the superblock of our flat file                      |Nil|
-| cf***       | Allows user to create file in the specified directory        |<filename> <type*> <parent inode number>|
-| wf        | Allows user to choose a file using inode number and then write in it |<inode number> <data**>|
-| rf        | Allows user to read a file in the specified directory        |<inode number>|
-| ul***       | Unlinks a file or an empty directory                       |<filename> <parent inode number>|
-| laf       | Lists all files in the specified directory                   |<parent inode>|
-| lu        | Returns the inode number of a file  |<filename>|
+| Function   | Functionality                                                        | Extra Arguments                             |
+|------------|----------------------------------------------------------------------|---------------------------------------------|
+| `rs`       | Reads the superblock of our flat file                                | Nil                                         |
+| `cf***`    | Allows user to create file in the specified directory                | `<filename> <type*> <parent inode number>`  |
+| `wf`       | Allows user to choose a file using inode number and then write in it | `<inode number> <data**>`                   |
+| `rf`       | Allows user to read a file in the specified directory                | `<inode number>`                            |
+| `ul***`    | Unlinks a file or an empty directory                                 | `<filename> <parent inode number>`          |
+| `laf`      | Lists all files in the specified directory                           | `<parent inode>`                            |
+| `lu`       | Returns the inode number of a file                                   | `<filename>`                                |
+
+
 
 >*Type :
 > - 1 : text file 
