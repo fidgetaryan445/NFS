@@ -273,7 +273,7 @@ void list_all_files(int fd, super_t *super, int inode, char *response) {
             inode_t inode_read;
             pread(fd, &inode_read, sizeof(inode_t), (super->inode_region_addr) * UFS_BLOCK_SIZE + name.inum * sizeof(inode_t));
             if (inode_read.type == 1) {
-                snprintf(temp_buffer + strlen(temp_buffer), BUFFER_SIZE - strlen(temp_buffer), "%-15%-15d%s\n", name.name,lookup(fd,super,name.name) , "-file");
+                snprintf(temp_buffer + strlen(temp_buffer), BUFFER_SIZE - strlen(temp_buffer), "%-15s%-15d%s\n", name.name,lookup(fd,super,name.name) , "-file");
             } else if (inode_read.type == 2) {
                 snprintf(temp_buffer + strlen(temp_buffer), BUFFER_SIZE - strlen(temp_buffer), "%-15s%-15d%s\n", name.name,lookup(fd,super,name.name),"-directory");
             }
