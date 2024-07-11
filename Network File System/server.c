@@ -10,7 +10,7 @@
 #define BUFFER_SIZE (1000)
 
 void read_superblock(int fd, super_t *super) {
-    // Read the superblock from the file
+    
     ssize_t bytes_read = pread(fd, super, sizeof(super_t), 0);
     if (bytes_read != sizeof(super_t)) {
         perror("Error reading superblock");
@@ -25,23 +25,23 @@ void create_root(int fd , super_t *super){
 	if(root.type ==2  ){
 		return ;
 	}
-    //writing inode bitmap for root
+   
 
 	unsigned char inode_bitmap_byte  ;
     pread(fd, &inode_bitmap_byte,sizeof(unsigned char), (super->inode_bitmap_addr)*UFS_BLOCK_SIZE);
     inode_bitmap_byte |= (1<<0) ;
 	pwrite(fd,&inode_bitmap_byte,sizeof(unsigned char),(super->inode_bitmap_addr)*UFS_BLOCK_SIZE);
     
-    //writing inode table  ;
+  
     root.type = 2 ;
     root.size = sizeof(dir_ent_t) ;
     root.direct[0] = 0 ; 
     pwrite(fd , &root , sizeof(inode_t),(super->inode_region_addr)*UFS_BLOCK_SIZE) ;
      
-    //writing in data_bitmap for root 
+   
      pwrite(fd,&inode_bitmap_byte,sizeof(unsigned char),(super->data_bitmap_addr)*UFS_BLOCK_SIZE);
 
-    //writing in data region .
+   
     dir_ent_t entry ;
     entry.inum= 0;
     strcpy(entry.name,".");
@@ -56,46 +56,46 @@ int find_free_inode(int fd, super_t *super) {
     int total_inodes = super->num_inodes;
     int bits_per_block = 8 * UFS_BLOCK_SIZE;
 
-    // Iterate through each bit in the inode bitmap
+    
     for (int bit_offset = 0; bit_offset < total_inodes; bit_offset++) {
         int byte_idx = bit_offset / 8;
         int bit_idx = bit_offset % 8;
 
-        // Read the byte containing the bit we are interested in
+        
         unsigned char byte;
         pread(fd, &byte, sizeof(unsigned char), (super->inode_bitmap_addr ) * UFS_BLOCK_SIZE+ byte_idx*sizeof(unsigned char));
 
-        // Check if the bit is clear (not allocated)
+        
         if ((byte & (1 << bit_idx)) == 0) {
-            // Mark the bit as allocated
+           
             byte = byte | (1 << bit_idx);
             pwrite(fd, &byte, sizeof(unsigned char), (super->inode_bitmap_addr ) * UFS_BLOCK_SIZE+ byte_idx*sizeof(unsigned char));
             return bit_offset;
         }
     }
     
-    return -1; // No free inode found
+    return -1; 
 }
 
 int find_free_data_block(int fd, super_t *super) {
     int total_data_blocks = super->num_data;
     int bits_per_block = 8 * UFS_BLOCK_SIZE;
 
-    // Iterate through each bit in the data bitmap
+   
     for (int bit_offset = 0; bit_offset < total_data_blocks; bit_offset++) {
         int byte_idx = bit_offset / 8;
         int bit_idx = bit_offset % 8;
 
-        // Read the byte containing the bit we are interested in
+       
         unsigned char byte;
         pread(fd, &byte, sizeof(unsigned char), (super->data_bitmap_addr ) * UFS_BLOCK_SIZE + byte_idx * sizeof(unsigned char));
 
-        // Check if the bit is clear (not allocated)
+        
         if ((byte & (1 << bit_idx)) == 0) {
-            // Mark the bit as allocated
+            
             byte = byte |(1 << bit_idx);
             pwrite(fd, &byte, sizeof(unsigned char), (super->data_bitmap_addr ) * UFS_BLOCK_SIZE + byte_idx * sizeof(unsigned char));
-            return bit_offset + super->data_region_addr; // Return the actual block number
+            return bit_offset + super->data_region_addr; 
         }
     }
     
@@ -104,7 +104,7 @@ int find_free_data_block(int fd, super_t *super) {
 
 int lookup(int fd, super_t *super, char *filename) {
     dir_ent_t entry;
-    int max_entries = super->num_inodes; // Adjust to match the number of inodes
+    int max_entries = super->num_inodes; 
 
     for (int i = 0; i < max_entries; i++) {
         pread(fd, &entry, sizeof(dir_ent_t), (super->data_region_addr +i)* UFS_BLOCK_SIZE );
@@ -280,13 +280,13 @@ void list_all_files(int fd, super_t *super, int inode, char *response) {
         }
     }
     
-    strncpy(response, temp_buffer, BUFFER_SIZE); // Copy the output to the response buffer
+    strncpy(response, temp_buffer, BUFFER_SIZE); 
     return;
 }
 
 
 void ulink(int fd, super_t *super,char *name, int pinum ) {
-    // Use lookup to find the inode number of the file/directory
+    
     int inode_num = lookup(fd, super, name);
     if (inode_num == -1) {
         printf("File or directory not found\n");
@@ -296,7 +296,7 @@ void ulink(int fd, super_t *super,char *name, int pinum ) {
     inode_t inode;
     pread(fd, &inode, sizeof(inode_t), super->inode_region_addr * UFS_BLOCK_SIZE + inode_num * sizeof(inode_t));
 
-    // Check if it's a directory and if it's empty
+ 
     if (inode.type == 2) {
         int non_empty_count = 0;
         for (int i = 0; i < DIRECT_PTRS; i++) {
@@ -310,7 +310,7 @@ void ulink(int fd, super_t *super,char *name, int pinum ) {
         }
     }
 
-    // Remove the directory entry from the parent directory
+    
     inode_t parent_inode;
     pread(fd, &parent_inode, sizeof(inode_t), super->inode_region_addr * UFS_BLOCK_SIZE + pinum * sizeof(inode_t));
 
@@ -338,7 +338,7 @@ void ulink(int fd, super_t *super,char *name, int pinum ) {
         return;
     }
 
-    // Mark the inode as free
+   
     int byte_idx = inode_num / 8;
     int bit_idx = inode_num % 8;
     unsigned char byte;
@@ -346,12 +346,12 @@ void ulink(int fd, super_t *super,char *name, int pinum ) {
     byte &= ~(1 << bit_idx);
     pwrite(fd, &byte, sizeof(unsigned char), (super->inode_bitmap_addr) * UFS_BLOCK_SIZE + byte_idx);
 
-    // Clear the inode region
+  
     inode_t clear_inode;
     memset(&clear_inode, 0, sizeof(inode_t));
     pwrite(fd, &clear_inode, sizeof(inode_t), super->inode_region_addr * UFS_BLOCK_SIZE + inode_num * sizeof(inode_t));
 
-    // Mark the data blocks as free and clear them
+   
     for (int i = 0; i < DIRECT_PTRS; i++) {
         if (inode.direct[i] != -1) {
             int data_block = inode.direct[i];
@@ -367,7 +367,7 @@ void ulink(int fd, super_t *super,char *name, int pinum ) {
         }
     }
 
-    // Remove the directory entry
+    
     entry.inum = -1;
     memset(entry.name, 0, sizeof(entry.name));
     pwrite(fd, &entry, sizeof(dir_ent_t), (super->data_region_addr + entry_block) * UFS_BLOCK_SIZE + entry_offset);
@@ -377,7 +377,7 @@ void ulink(int fd, super_t *super,char *name, int pinum ) {
 
 
 void process_request(char *request, char *response) {
-    // Tokenize the request
+  
     char *token = strtok(request, " ");
     char *argv[259];
     int argc = 1;
@@ -392,7 +392,7 @@ void process_request(char *request, char *response) {
 
     char *image_file = argv[2];
     
-    // Open the file system image file
+   
     int fd = open(image_file, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if (fd < 0) {
         perror("open");
@@ -400,7 +400,7 @@ void process_request(char *request, char *response) {
         return;
     }
 
-    // Create a super_t structure to hold the superblock data
+  
     super_t super;
     read_superblock(fd, &super);
     create_root(fd, &super);
@@ -453,7 +453,7 @@ void process_request(char *request, char *response) {
     wrt(fd, &super, inode_num, data);
 
     free(data);
-    strcpy(response, "Write successful")
+    strcpy(response, "Write successful");
 }
  else if (strcmp(argv[1], "-rf") == 0) {
         char buf[BUFFER_SIZE];
@@ -469,7 +469,7 @@ void process_request(char *request, char *response) {
         strcpy(response, "No such command found");
     }
 
-    // Close the file descriptor
+   
     close(fd);
 }
 
