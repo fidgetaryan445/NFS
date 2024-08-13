@@ -37,7 +37,7 @@ I have provided with `build.sh` script to make the binaries and flat file for th
 ./server
 ```
 3) On client side you can follow the following usage manual : 
-  **Usage:**  ==./client -function <flat file name> <extra arguments>== 
+  **Usage:**  ==./client -function <flat_file_name> <extra_arguments>== 
   
 | Function   | Functionality                                                        | Extra Arguments                             |
 |------------|----------------------------------------------------------------------|---------------------------------------------|
